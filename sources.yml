@@ -1,0 +1,13 @@
+output-destination: /home/tom/Desktop/Work/Research/uil/postquals/macro_energy/data/
+data-sources:
+  san-fransisco:
+    energy:
+      description: "https://data.sfgov.org/Energy-and-Environment/Existing-Buildings-Energy-Performance-Ordinance-Re/j2j3-acqj"
+      download: "https://data.sfgov.org/api/views/j2j3-acqj/rows.csv?accessType=DOWNLOAD"
+      filetype: "csv"
+      filesize: 1.5
+    footprints:
+      description: ""
+      download: "https://data.sfgov.org/api/geospatial/ynuv-fyni?method=export&format=GeoJSON"
+      filetype: "geojson"
+      filesize: 320
