@@ -1,4 +1,4 @@
-output-destination: /home/tom/Desktop/Work/Research/uil/postquals/macro_energy/data/
+output-destination: /home/thomas/Work/Research/uil/macro_energy/data/
 data-sources:
   san-fransisco:
     energy:
