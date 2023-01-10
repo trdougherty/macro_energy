@@ -11,3 +11,124 @@ data-sources:
       download: "https://data.sfgov.org/api/geospatial/ynuv-fyni?method=export&format=GeoJSON"
       filetype: "geojson"
       filesize: 320
+  new-york:
+    energy-2021:
+      description: "https://data.cityofnewyork.us/Environment/Energy-and-Water-Data-Disclosure-for-Local-Law-84-/7x5e-2fxh"
+      download: "https://data.cityofnewyork.us/api/views/7x5e-2fxh/rows.csv?accessType=DOWNLOAD"
+      filetype: "csv"
+      filesize: 86
+    energy-2020:
+      description: "https://data.cityofnewyork.us/Environment/Energy-and-Water-Data-Disclosure-for-Local-Law-84-/usc3-8zwd"
+      download: "https://data.cityofnewyork.us/api/views/usc3-8zwd/rows.csv?accessType=DOWNLOAD"
+      filetype: "csv"
+      filesize: 80
+    energy-2019:
+      description: "https://data.cityofnewyork.us/Environment/Energy-and-Water-Data-Disclosure-for-Local-Law-84-/wcm8-aq5w"
+      download: "https://data.cityofnewyork.us/api/views/wcm8-aq5w/rows.csv?accessType=DOWNLOAD"
+      filetype: "csv"
+      filesize: 84
+    energy-2018:
+      description: "https://data.cityofnewyork.us/Environment/Energy-and-Water-Data-Disclosure-for-Local-Law-84-/4tys-3tzj"
+      download: "https://data.cityofnewyork.us/api/views/4tys-3tzj/rows.csv?accessType=DOWNLOAD"
+      filetype: "csv"
+      filesize: 74
+    energy-2017:
+      description: "https://data.cityofnewyork.us/Environment/Energy-and-Water-Data-Disclosure-for-Local-Law-84-/4t62-jm4m"
+      download: "https://data.cityofnewyork.us/api/views/4t62-jm4m/rows.csv?accessType=DOWNLOAD"
+      filetype: "csv"
+      filesize: 33
+    energy-2016:
+      description: "https://data.cityofnewyork.us/Environment/Energy-and-Water-Data-Disclosure-for-Local-Law-84-/utpj-74fz"
+      download: "https://data.cityofnewyork.us/api/views/utpj-74fz/rows.csv?accessType=DOWNLOAD"
+      filetype: "csv"
+      filesize: 49
+    energy-2015:
+      description: "https://data.cityofnewyork.us/Environment/Energy-and-Water-Data-Disclosure-for-Local-Law-84-/77q4-nkfh"
+      download: "https://data.cityofnewyork.us/api/views/77q4-nkfh/rows.csv?accessType=DOWNLOAD"
+      filetype: "csv"
+      filesize: 48
+    energy-2014:
+      description: "https://data.cityofnewyork.us/Environment/Energy-and-Water-Data-Disclosure-for-Local-Law-84-/nbun-wekj"
+      download: "https://data.cityofnewyork.us/api/views/nbun-wekj/rows.csv?accessType=DOWNLOAD"
+      filetype: "csv"
+      filesize: 38
+    energy-2013:
+      description: "https://data.cityofnewyork.us/Environment/Energy-and-Water-Data-Disclosure-for-Local-Law-84-/yr5p-wjer"
+      download: "https://data.cityofnewyork.us/api/views/yr5p-wjer/rows.csv?accessType=DOWNLOAD"
+      filetype: "csv"
+      filesize: 51
+    energy-2012:
+      description: "https://data.cityofnewyork.us/Environment/Energy-and-Water-Data-Disclosure-for-Local-Law-84-/r6ub-zhff"
+      download: "https://data.cityofnewyork.us/api/views/r6ub-zhff/rows.csv?accessType=DOWNLOAD"
+      filetype: "csv"
+      filesize: 34
+    energy-2011:
+      description: "https://data.cityofnewyork.us/Environment/Energy-and-Water-Data-Disclosure-for-Local-Law-84-/k7nh-aufb"
+      download: "https://data.cityofnewyork.us/api/views/k7nh-aufb/rows.csv?accessType=DOWNLOAD"
+      filetype: "csv"
+      filesize: 10
+    energy-2010:
+      description: "https://data.cityofnewyork.us/Environment/Energy-and-Water-Data-Disclosure-for-Local-Law-84-/kswi-37bp"
+      download: "https://data.cityofnewyork.us/api/views/kswi-37bp/rows.csv?accessType=DOWNLOAD"
+      filetype: "csv"
+      filesize: 5.6
+    footprints:
+      description: "https://github.com/CityOfNewYork/nyc-geo-metadata/blob/master/Metadata/Metadata_BuildingFootprints.md"
+      download: "https://data.cityofnewyork.us/api/geospatial/qb5r-6dgf?method=export&format=GeoJSON"
+      filetype: "geojson"
+      filesize: 398
+  seattle:
+    energy-2015:
+      description: "https://data.seattle.gov/dataset/2015-Building-Energy-Benchmarking/h7rm-fz6m"
+      download: "https://data.seattle.gov/api/views/h7rm-fz6m/rows.csv?accessType=DOWNLOAD"
+      filetype: "csv"
+      filesize: 10
+    energy-2016:
+      description: "https://data.seattle.gov/dataset/2016-Building-Energy-Benchmarking/2bpz-gwpy"
+      download: "https://data.seattle.gov/api/views/2bpz-gwpy/rows.csv?accessType=DOWNLOAD"
+      filetype: "csv"
+      filesize: 10
+    energy-2017:
+      description: "https://data.seattle.gov/dataset/2017-Building-Energy-Benchmarking/qxjw-iwsh"
+      download: "https://data.seattle.gov/api/views/qxjw-iwsh/rows.csv?accessType=DOWNLOAD"
+      filetype: "csv"
+      filesize: 10
+    energy-2019:
+      description: "https://data.seattle.gov/dataset/2019-Building-Energy-Benchmarking/3th6-ticf"
+      download: "https://data.seattle.gov/api/views/3th6-ticf/rows.csv?accessType=DOWNLOAD"
+      filetype: "csv"
+      filesize: 20
+    energy-2020:
+      description: "https://data.seattle.gov/dataset/2020-Building-Energy-Benchmarking/auez-gz8p"
+      download: "https://data.seattle.gov/api/views/auez-gz8p/rows.csv?accessType=DOWNLOAD"
+      filetype: "csv"
+      filesize: 60
+    footprints:
+      description: "https://data-seattlecitygis.opendata.arcgis.com/datasets/1e3a033a714e483cbbc84e29b45fd183/explore"
+      download: "https://opendata.arcgis.com/api/v3/datasets/1e3a033a714e483cbbc84e29b45fd183_0/downloads/data?format=geojson&spatialRefId=4326&where=1%3D1"
+      filetype: "geojson"
+      filesize: 426
+  los-angeles:
+    energy:
+      description: "https://data.lacity.org/widgets/9yda-i4ya?mobile_redirect=true"
+      download: "https://data.lacity.org/api/views/9yda-i4ya/rows.csv?accessType=DOWNLOAD"
+      filetype: "csv"
+      filesize: 10
+    footprints:
+      description: "https://geohub.lacity.org/datasets/lahub::building-footprints/explore" 
+      download: "https://opendata.arcgis.com/api/v3/datasets/813fcefde1f64b209103107b26a8909f_0/downloads/data?format=geojson&spatialRefId=4326&where=1%3D1"
+      filetype: "geojson"
+      filesize: 10
+  chicago:
+    energy:
+      description: "https://data.cityofchicago.org/Environment-Sustainable-Development/Chicago-Energy-Benchmarking/xq83-jr8c"
+      download: "https://data.cityofchicago.org/api/views/xq83-jr8c/rows.csv?accessType=DOWNLOAD"
+      filetype: "csv"
+      filesize: 10
+    footprints:
+      description: "https://data.cityofchicago.org/Buildings/Building-Footprints-current-/hz9b-7nh8"
+      download: "https://data.cityofchicago.org/api/geospatial/hz9b-7nh8?method=export&format=GeoJSON"
+      filetype: "geojson"
+      filesize: 10
+    
+
