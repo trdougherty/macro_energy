@@ -175,7 +175,7 @@ select!(energyₖ, :footprint_id, :geometry, :year, Not(["value", "variable", "F
 end
 
 # ╔═╡ c0052413-6d50-45e2-974b-d38239a3efbf
-energyₖ[:,"energy"] = energyₖ[:,"Floor Area"] .* energyₖ[:,"value"] .* 0.00029301453352086; # should use the util for units, Pluto makes it hard to work with modules
+energyₖ[:,"energy"] = energyₖ[:,"Floor Area"] .* energyₖ[:,"value"] ./ 3412.14; # should use the util for units, Pluto makes it hard to work with modules
 
 # ╔═╡ 3c7a5238-5ef3-403d-acd8-c85e54012bb5
 energyₖ[:,"year"] = parse.(Int16, energyₖ[:,"variable"]);
