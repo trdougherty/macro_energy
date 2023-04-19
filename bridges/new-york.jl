@@ -28,7 +28,7 @@ md"""
 """
 
 # ╔═╡ 6627e69f-9f07-4eb4-ac24-5048054947d6
-city = joinpath("data","new-york")
+city = joinpath("..","data","new-york")
 
 # ╔═╡ 4b34d9ae-c3c2-4275-8a5f-0ce2aac59dcf
 begin
@@ -274,8 +274,55 @@ dropmissing!(energyᵣ₂, [:energy_kbtu, :area_ft])
 # energyᵣ₂.area_ft = convert.(Float64, energyᵣ₂.area_ft)
 end
 
+# ╔═╡ 65d85773-e48b-4aa1-a1ec-10284e6f4864
+extrema(energyᵣ₁.year)
+
+# ╔═╡ e3e3b789-c497-4fe1-a4be-2a8430263513
+extrema(energyᵣ₂.year)
+
 # ╔═╡ 37a32279-c5de-4baf-8004-b45a15468c0e
+begin
 energy = vcat(energyᵣ₁, energyᵣ₂);
+energy.bin = string.(energy.bin)
+
+filter!(
+	x -> length(x.bin) == 7 && x.energy_kbtu != "Not Available",
+	dropmissing!(energy, [:bin, :energy_kbtu, :area_ft])
+)
+end
+
+# ╔═╡ 1dcb5f2e-8f97-4dc4-81ae-bec725ec218b
+# begin
+# energy = filter(
+# 	x -> length(x.bin) == 7 && x.energy_kbtu != "Not Available",
+# 	dropmissing(energy₁, [:bin, :energy_kbtu, :area_ft])
+# )
+# # energy.bin = parse.(Int64, energy.bin)
+# energy.energy = energy.energy_kbtu ./ 3412.8
+# energy.area = energy.area_ft ./ 10.7639
+# select!(energy, [:bin, :address, :city, :energy, :area, :year])
+# end;
+
+# ╔═╡ 4c45200c-92f9-45d5-9409-1ac783568fce
+extrema(energy.year)
+
+# ╔═╡ ed2483f4-b364-46ff-8042-ae96bbd5d58f
+begin
+@info "Energy Data Contents:" names(energy)
+
+filter!(
+	x -> length(x.bin) == 7 && x.energy_kbtu != "Not Available",
+	dropmissing!(energy, [:bin, :energy_kbtu, :area_ft])
+)
+
+energy.energy = energy.energy_kbtu ./ 3412.14
+energy.area = energy.area_ft ./ 10.7639
+
+energyₖ = select(energy, [:footprint_id, :year, :energy, :area])
+end
+
+# ╔═╡ 51407e07-748b-4a2a-9866-3b2ca49d47d5
+
 
 # ╔═╡ e68490e8-9d49-48e2-84f0-fe4487cd8024
 output_dir = joinpath(city, "prepped")
@@ -283,40 +330,32 @@ output_dir = joinpath(city, "prepped")
 # ╔═╡ db4714d0-cdfd-4135-95af-cdb761b22760
 mkpath(output_dir)
 
-# ╔═╡ 04c04b46-a98e-4190-aaf8-0af492472189
-footprints_file = joinpath(city, "footprints.geojson")
-
-# ╔═╡ a0294d33-ac86-4562-9f63-c6867be54f54
-footprints = GeoDataFrames.read(footprints_file);
-
-# ╔═╡ 8ab4f900-901d-4725-8b73-8fae514ee7c5
-md"""
-###### Now extracting information about each of these datasets and processing it into a digestible format. 
-
-_Note:_ The latitudes and longitudes used by SF to link each building are terrible (the location they give is in the middle of the street). I used [this](https://www.geocod.io/) website to geocode the street addresses to lat lons by just uploading the csv doc. Quality seem pretty great and it only cost me like ~$1. I'm happy to pay for it again if it saves us more than 10 minutes of time
-"""
-
-# ╔═╡ 0f308db4-32e6-4ffe-9e88-019f4ddb9c17
-energy.footprint_id = string.(hash.(energy.bin))
-
-# ╔═╡ ed2483f4-b364-46ff-8042-ae96bbd5d58f
-@info "Energy Data Contents:" names(energy)
-
-energy.energy = energy.energy_kbtu ./ 3414.4259497
-energy.area = energy.area_ft ./ 10.7639
-dropmissing!(energy, :bin)
-filter!(x -> length(x.bin) == 7, energy)
-
-energyₖ = select(energy, [:footprint_id, :year, :energy, :area])
-
 # ╔═╡ 5fdfb5d1-8d96-410a-a5d7-625ea6f0dabc
-CSV.write(joinpath(output_dir, "energy-k.csv"), energyₖ)
+CSV.write(joinpath(output_dir, "energy.csv"), energyₖ)
+
+# ╔═╡ 04c04b46-a98e-4190-aaf8-0af492472189
+footprints_file = joinpath(
+	city, 
+	"geo_export_1da3ad53-9d44-4fb1-9cbd-fea82034e0f9.shp"
+)
 
 # ╔═╡ 29021f44-da6c-4f24-a042-1737b26206e7
-reported_bin = unique(energy.bin)
-@info "Reported BIN values:" reported_bin
+begin
+	reported_bin::Vector{String} = unique(energy.bin)
+	@info "Reported BIN values:" reported_bin
+end
+
+# ╔═╡ a0294d33-ac86-4562-9f63-c6867be54f54
+begin
+footprints = GeoDataFrames.read(footprints_file);
+footprints.bin = string.(convert.(Int64, footprints.bin))
+end
+
+# ╔═╡ a4682c6c-151d-4900-8451-0a117e83c6a7
+typeof(reported_bin)
 
 # ╔═╡ d2fd7585-9067-4c27-822a-1471dfb3ed5d
+begin
 @info "Footprints column:" names(footprints)
 @info "Footprints - missing points:" describe(footprints, :nmissing)
 
@@ -327,16 +366,45 @@ footprintsₖ = filter(
 	x -> x.bin ∈ reported_bin,
 	footprints_o
 )
+end
 
 # ╔═╡ 070da19d-24a4-42fc-be83-e98120081f79
-footprintsₖ.id = string.(hash.(footprintsₖ.bin))
-@info "Number of Buildings in New York" nrow(footprintsₖ)
+begin
+	footprintsₖ.id = string.(hash.(footprintsₖ.bin))
+	@info "Number of Buildings in New York" nrow(footprintsₖ)
+end
 
 # ╔═╡ f0cadbf0-79bf-4dda-b83f-124215e91ef4
+begin
 footprintsₖₒ = select(footprintsₖ, [:id, :geometry])
+footprintsₖₒ.geometry = GeoDataFrames.convexhull.(footprintsₖₒ.geometry)
+footprintsₖₒ
+end
+
+# ╔═╡ 9d2d48ae-588e-4452-a81a-dff24b32a8e5
+GeoDataFrames.convexhull.(footprintsₖₒ.geometry)
+
+# ╔═╡ 35c29b90-96ec-424f-93f0-cc9e27fd3f24
+Plots.plot(footprintsₖₒ.geometry)
+
+# ╔═╡ 0535dbf9-b7b4-4efe-ba98-5cba0594641e
+footprintsₖₒ[1:10000,:]
+
+# ╔═╡ ebb53cdc-0d7d-4620-ba1c-dd58d57f51a1
+footprintsₖₒ[10001:end,:]
 
 # ╔═╡ 9a457a94-15c2-4d81-ae30-aff8db6fc5dd
-GeoDataFrames.write(joinpath(output_dir, "footprints-k.geojson"), footprintsₖₒ; geom_column=:geometry, driver="GeoJSON")
+GeoDataFrames.write(joinpath(output_dir, "footprints1.geojson"), footprintsₖₒ[1:10000,:]; geom_column=:geometry, driver="GeoJSON")
+
+# ╔═╡ cc7ae149-e768-4cc4-b5f7-87dad144ca34
+GeoDataFrames.write(joinpath(output_dir, "footprints2.geojson"), footprintsₖₒ[10001:end,:]; geom_column=:geometry, driver="GeoJSON")
+
+# ╔═╡ 8ab4f900-901d-4725-8b73-8fae514ee7c5
+md"""
+###### Now extracting information about each of these datasets and processing it into a digestible format. 
+
+_Note:_ The latitudes and longitudes used by SF to link each building are terrible (the location they give is in the middle of the street). I used [this](https://www.geocod.io/) website to geocode the street addresses to lat lons by just uploading the csv doc. Quality seem pretty great and it only cost me like ~$1. I'm happy to pay for it again if it saves us more than 10 minutes of time
+"""
 
 # ╔═╡ 05fa79b9-52a0-4194-a4e9-0d7e2e78326c
 md"""
@@ -456,24 +524,6 @@ md"""
 # ╔═╡ 07787662-a45b-4770-bb2a-c73fb205b02d
 # @info nrow(footprints)
 
-# ╔═╡ e4a16264-52ef-4ca4-932b-973b09966274
-# ╠═╡ disabled = true
-#=╠═╡
-# begin
-# 	regionlist = []
-# 	for building_point in energy.geometry
-# 		footprint_id = missing
-# 		for (boundary_index, boundary_geom) in enumerate(footprints.geometry)
-# 			if GeoDataFrames.contains(boundary_geom, building_point)
-# 				footprint_id = footprints[boundary_index, "id"]
-# 				break
-# 			end
-# 		end
-# 		push!(regionlist, footprint_id)
-# 	end
-# end
-  ╠═╡ =#
-
 # ╔═╡ a1a59fb6-6b77-4ef7-9460-d44168a88330
 # regionlist
 
@@ -559,41 +609,11 @@ So this is the percent of the total apparent energy from sf (18,000 MWh per day)
 # ╔═╡ c7d21486-ab1f-4252-a723-31a0936468f6
 
 
-# ╔═╡ a81b33e9-0d2b-47ee-bd5f-5ee3b0e16d6a
-# ╠═╡ disabled = true
-#=╠═╡
-# now we finally have two cleaned datasets which are ready to work with the rest of the analysis!
-  ╠═╡ =#
-
 # ╔═╡ f6118bdd-844e-4261-a1bd-b57325395bf6
 # footprintsₖ = filter(x -> x.id ∈ string.(unique(energyₖ.footprint_id)), footprints)
 
 # ╔═╡ 16ab90d2-4191-429d-b765-2c06d772b504
 
-
-# ╔═╡ 1dcb5f2e-8f97-4dc4-81ae-bec725ec218b
-begin
-energy = filter(
-	x -> length(x.bin) == 7 && x.energy_kbtu != "Not Available",
-	dropmissing(energy₁, [:bin, :energy_kbtu, :area_ft])
-)
-# energy.bin = parse.(Int64, energy.bin)
-energy.energy = energy.energy_kbtu ./ 3412.8
-energy.area = energy.area_ft ./ 10.7639
-select!(energy, [:bin, :address, :city, :energy, :area, :year])
-end;
-
-# ╔═╡ 115c39d1-743a-4d8f-9e2f-301eeb6cec0a
-# ╠═╡ disabled = true
-#=╠═╡
-energy = CSV.read(energy_geolocations_file, DataFrame)
-  ╠═╡ =#
-
-# ╔═╡ 25754513-175b-4fc1-9025-01353bc39782
-# ╠═╡ disabled = true
-#=╠═╡
-energy = CSV.read(energy_file, DataFrame; delim=',', ntasks=1);
-  ╠═╡ =#
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -624,7 +644,7 @@ StatsBase = "~0.33.21"
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.8.4"
+julia_version = "1.8.5"
 manifest_format = "2.0"
 project_hash = "2ed9735099e92cce4c295291c6f71ac900c9b408"
 
@@ -2034,23 +2054,30 @@ version = "1.4.1+0"
 # ╠═96460476-bfb4-4f7b-a52e-e614e76d5e65
 # ╠═61c6cb94-6ada-41c5-aab1-4c214a7c19aa
 # ╠═15abf7d6-0df6-477c-98f2-0e79813d8fc7
+# ╠═65d85773-e48b-4aa1-a1ec-10284e6f4864
+# ╠═e3e3b789-c497-4fe1-a4be-2a8430263513
 # ╠═37a32279-c5de-4baf-8004-b45a15468c0e
 # ╠═1dcb5f2e-8f97-4dc4-81ae-bec725ec218b
-# ╠═0f308db4-32e6-4ffe-9e88-019f4ddb9c17
+# ╠═4c45200c-92f9-45d5-9409-1ac783568fce
 # ╠═ed2483f4-b364-46ff-8042-ae96bbd5d58f
+# ╠═51407e07-748b-4a2a-9866-3b2ca49d47d5
 # ╠═e68490e8-9d49-48e2-84f0-fe4487cd8024
 # ╠═db4714d0-cdfd-4135-95af-cdb761b22760
 # ╠═5fdfb5d1-8d96-410a-a5d7-625ea6f0dabc
 # ╠═04c04b46-a98e-4190-aaf8-0af492472189
 # ╠═29021f44-da6c-4f24-a042-1737b26206e7
 # ╠═a0294d33-ac86-4562-9f63-c6867be54f54
+# ╠═a4682c6c-151d-4900-8451-0a117e83c6a7
 # ╠═d2fd7585-9067-4c27-822a-1471dfb3ed5d
 # ╠═070da19d-24a4-42fc-be83-e98120081f79
 # ╠═f0cadbf0-79bf-4dda-b83f-124215e91ef4
+# ╠═9d2d48ae-588e-4452-a81a-dff24b32a8e5
+# ╠═35c29b90-96ec-424f-93f0-cc9e27fd3f24
+# ╠═0535dbf9-b7b4-4efe-ba98-5cba0594641e
+# ╠═ebb53cdc-0d7d-4620-ba1c-dd58d57f51a1
 # ╠═9a457a94-15c2-4d81-ae30-aff8db6fc5dd
+# ╠═cc7ae149-e768-4cc4-b5f7-87dad144ca34
 # ╟─8ab4f900-901d-4725-8b73-8fae514ee7c5
-# ╠═115c39d1-743a-4d8f-9e2f-301eeb6cec0a
-# ╠═25754513-175b-4fc1-9025-01353bc39782
 # ╟─05fa79b9-52a0-4194-a4e9-0d7e2e78326c
 # ╠═f0f2447c-080d-42a5-9221-284c3aa52d19
 # ╟─4c39c315-f998-4469-8442-0cc2b25b842d
@@ -2074,7 +2101,6 @@ version = "1.4.1+0"
 # ╟─80ca82ce-f7e5-4f24-b44a-159fff71f8d1
 # ╠═e3eb78d5-ad22-4465-9fc5-92ed9953b070
 # ╠═07787662-a45b-4770-bb2a-c73fb205b02d
-# ╠═e4a16264-52ef-4ca4-932b-973b09966274
 # ╠═a1a59fb6-6b77-4ef7-9460-d44168a88330
 # ╟─fb7022f6-53d8-40a7-9129-913dae62a564
 # ╠═9afc732e-dd56-493d-afb4-342e1ab7a398
@@ -2096,7 +2122,6 @@ version = "1.4.1+0"
 # ╠═f2e512c6-8be2-459f-93f1-81ca0170ae41
 # ╠═7bf8836c-92ba-42cf-9c8a-1379e4eff2f7
 # ╠═c7d21486-ab1f-4252-a723-31a0936468f6
-# ╠═a81b33e9-0d2b-47ee-bd5f-5ee3b0e16d6a
 # ╠═f6118bdd-844e-4261-a1bd-b57325395bf6
 # ╟─16ab90d2-4191-429d-b765-2c06d772b504
 # ╟─00000000-0000-0000-0000-000000000001
