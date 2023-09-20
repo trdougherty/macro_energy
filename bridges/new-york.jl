@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.18
+# v0.19.27
 
 using Markdown
 using InteractiveUtils
@@ -92,10 +92,13 @@ e2012′ = unique(select(rename(
 e2012′.year = repeat([2012], nrow(e2012′))
 end;
 
+# ╔═╡ e3424bba-88ac-4f56-8865-409ac6f654a1
+filter(x -> x["Number of Buildings"] == "1", e2013)
+
 # ╔═╡ 113f7808-8e8c-415e-bc8b-4b7b9e7c49ee
 begin
 e2013′ = unique(select(rename(
-	filter(x -> x["Number of Buildings"] == 1, e2013), 
+	filter(x -> x["Number of Buildings"] == "1", e2013), 
 	"NYC Borough, Block and Lot (BBL)" => "bbl",
 	"NYC Building Identification Number (BIN)" => "bin",
 	"Address 1" => "address",
@@ -109,7 +112,7 @@ end;
 # ╔═╡ 5117be16-14df-4187-b29f-af41a946ef0a
 begin
 e2014′ = unique(select(rename(
-	filter(x -> x["Number of Buildings"] == 1, e2014), 
+	filter(x -> x["Number of Buildings"] == "1", e2014), 
 	"NYC Borough, Block and Lot (BBL)" => "bbl",
 	"NYC Building Identification Number (BIN)" => "bin",
 	"Address 1" => "address",
@@ -123,7 +126,7 @@ end;
 # ╔═╡ 4fb4787a-c790-48ad-962b-c66878963556
 begin
 e2015′ = unique(select(rename(
-	filter(x -> x["Number of Buildings"] == 1, e2015), 
+	filter(x -> x["Number of Buildings"] == "1", e2015), 
 	"NYC Borough, Block and Lot (BBL)" => "bbl",
 	"NYC Building Identification Number (BIN)" => "bin",
 	"Address 1" => "address",
@@ -167,7 +170,9 @@ begin
 e2018′ = unique(select(rename(
 	filter(x -> 
 		x["Number of Buildings"] == 1 &&
-		x["Site Energy Use (kBtu)"] != "Not Available", e2018), 
+		x["Site Energy Use (kBtu)"] != "Not Available" &&
+		x["Largest Property Use Type - Gross Floor Area (ft²)"] != "Not Available",
+		e2018), 
 	"NYC Borough, Block and Lot (BBL)" => "bbl",
 	"NYC Building Identification Number (BIN)" => "bin",
 	"Address 1" => "address",
@@ -176,6 +181,7 @@ e2018′ = unique(select(rename(
 	"Site Energy Use (kBtu)" => "energy_kbtu"
 ), ["bbl","bin","address","city","energy_kbtu","area_ft"]))
 e2018′.energy_kbtu = parse.(Float64, e2018′.energy_kbtu)
+e2018′.area_ft = parse.(Float64, e2018′.area_ft)
 e2018′.year = repeat([2018], nrow(e2018′))
 end;
 
@@ -184,6 +190,7 @@ begin
 e2019′ = unique(select(rename(
 	filter(x -> 
 		x["Number of Buildings"] == 1 &&
+		x["Largest Property Use Type - Gross Floor Area (ft²)"] != "Not Available" &&
 		x["Site Energy Use (kBtu)"] != "Not Available", e2019), 
 	"NYC Borough, Block and Lot (BBL)" => "bbl",
 	"NYC Building Identification Number (BIN)" => "bin",
@@ -193,6 +200,7 @@ e2019′ = unique(select(rename(
 	"Site Energy Use (kBtu)" => "energy_kbtu"
 ), ["bbl","bin","address","city","energy_kbtu","area_ft"]))
 e2019′.energy_kbtu = parse.(Float64, e2019′.energy_kbtu)
+e2019′.area_ft = parse.(Float64, e2019′.area_ft)
 e2019′.year = repeat([2019], nrow(e2019′))
 end;
 
@@ -201,6 +209,7 @@ begin
 e2020′ = unique(select(rename(
 	filter(x -> 
 		x["Number of Buildings"] == 1 &&
+		x["Largest Property Use Type - Gross Floor Area (ft²)"] != "Not Available" &&
 		x["Site Energy Use (kBtu)"] != "Not Available" &&
 		x["Largest Property Use Type - Gross Floor Area (ft²)"] != "0", e2020
 	), 
@@ -212,6 +221,7 @@ e2020′ = unique(select(rename(
 	"Site Energy Use (kBtu)" => "energy_kbtu"
 ), ["bbl","bin","address","city","energy_kbtu","area_ft"]))
 e2020′.energy_kbtu = parse.(Float64, e2020′.energy_kbtu)
+e2020′.area_ft = parse.(Float64, e2020′.area_ft)
 e2020′.year = repeat([2020], nrow(e2020′))
 end;
 
@@ -221,6 +231,7 @@ e2021′ = unique(select(rename(
 	filter(x -> 
 		x["Number of Buildings"] == 1 &&
 		x["Site Energy Use (kBtu)"] != "Not Available" &&
+		x["Largest Property Use Type - Gross Floor Area (ft²)"] != "Not Available" &&
 		x["Largest Property Use Type - Gross Floor Area (ft²)"] != "0", e2021
 	), 
 	"NYC Borough, Block and Lot (BBL)" => "bbl",
@@ -231,6 +242,7 @@ e2021′ = unique(select(rename(
 	"Site Energy Use (kBtu)" => "energy_kbtu"
 ), ["bbl","bin","address","city","energy_kbtu","area_ft"]))
 e2021′.energy_kbtu = parse.(Float64, e2021′.energy_kbtu)
+e2021′.area_ft = parse.(Float64, e2021′.area_ft)
 e2021′.year = repeat([2021], nrow(e2021′))
 end;
 
@@ -252,6 +264,12 @@ energyᵣ = vcat(
 	e2021′,
 );
 
+# ╔═╡ 96218dc0-5bb9-4552-a34d-50e1d97f6b7e
+e2013′
+
+# ╔═╡ b88acf10-7afc-4b35-b62e-0fdcae73f203
+unique(energyᵣ.year)
+
 # ╔═╡ 61c6cb94-6ada-41c5-aab1-4c214a7c19aa
 begin
 energyᵣ₁ = filter( x -> 
@@ -269,16 +287,22 @@ energyᵣ₂ = filter( x ->
 	typeof(x.energy_kbtu) == Float64 &&
 	typeof(x.area_ft) == Float64, energyᵣ );
 
-dropmissing!(energyᵣ₂, [:energy_kbtu, :area_ft])
+# dropmissing!(energyᵣ₂, [:energy_kbtu, :area_ft])
 # energyᵣ₂.energy_kbtu = convert.(Float64, energyᵣ₂.energy_kbtu)
 # energyᵣ₂.area_ft = convert.(Float64, energyᵣ₂.area_ft)
 end
 
+# ╔═╡ 97e3a10c-67fc-484f-b27f-1777a61f9a26
+energyᵣ
+
+# ╔═╡ 0f898e91-6be4-49d7-9861-979a110c03a2
+energyᵣ₂
+
 # ╔═╡ 65d85773-e48b-4aa1-a1ec-10284e6f4864
-extrema(energyᵣ₁.year)
+unique(energyᵣ₁.year)
 
 # ╔═╡ e3e3b789-c497-4fe1-a4be-2a8430263513
-extrema(energyᵣ₂.year)
+unique(energyᵣ₂.year)
 
 # ╔═╡ 37a32279-c5de-4baf-8004-b45a15468c0e
 begin
@@ -306,6 +330,15 @@ end
 # ╔═╡ 4c45200c-92f9-45d5-9409-1ac783568fce
 extrema(energy.year)
 
+# ╔═╡ 2d97da6d-7e30-4868-8a7e-9578bcb98437
+unique(energy.year)
+
+# ╔═╡ 4a7274cb-1713-44f8-9f77-b264ed764c27
+hash.(energy.city)
+
+# ╔═╡ 6417a8f4-db39-4597-a1df-f9a2bd78e1b8
+
+
 # ╔═╡ ed2483f4-b364-46ff-8042-ae96bbd5d58f
 begin
 @info "Energy Data Contents:" names(energy)
@@ -317,12 +350,10 @@ filter!(
 
 energy.energy = energy.energy_kbtu ./ 3412.14
 energy.area = energy.area_ft ./ 10.7639
+energy.footprint_id = string.(hash.(energy.bin))
 
 energyₖ = select(energy, [:footprint_id, :year, :energy, :area])
 end
-
-# ╔═╡ 51407e07-748b-4a2a-9866-3b2ca49d47d5
-
 
 # ╔═╡ e68490e8-9d49-48e2-84f0-fe4487cd8024
 output_dir = joinpath(city, "prepped")
@@ -644,7 +675,7 @@ StatsBase = "~0.33.21"
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.8.5"
+julia_version = "1.9.3"
 manifest_format = "2.0"
 project_hash = "2ed9735099e92cce4c295291c6f71ac900c9b408"
 
@@ -791,7 +822,7 @@ version = "4.5.0"
 [[deps.CompilerSupportLibraries_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "e66e0078-7015-5450-92f7-15fbd957f2ae"
-version = "1.0.1+0"
+version = "1.0.5+0"
 
 [[deps.Contour]]
 git-tree-sha1 = "d05d9e7b7aedff4e5b51a029dced05cfb6125781"
@@ -831,7 +862,9 @@ uuid = "ade2ca70-3891-5945-98fb-dc099432e06a"
 
 [[deps.DelimitedFiles]]
 deps = ["Mmap"]
+git-tree-sha1 = "9e2f36d3c96a820c678f2f1f1782582fcf685bae"
 uuid = "8bb1440f-4735-579b-a4ab-409b98df4dab"
+version = "1.9.1"
 
 [[deps.DiffResults]]
 deps = ["StaticArraysCore"]
@@ -1285,7 +1318,7 @@ uuid = "38a345b3-de98-5d2b-a5d3-14cd9215e700"
 version = "2.36.0+0"
 
 [[deps.LinearAlgebra]]
-deps = ["Libdl", "libblastrampoline_jll"]
+deps = ["Libdl", "OpenBLAS_jll", "libblastrampoline_jll"]
 uuid = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 
 [[deps.LittleCMS_jll]]
@@ -1345,7 +1378,7 @@ version = "1.1.7"
 [[deps.MbedTLS_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "c8ffd9c3-330d-5841-b78e-0817d7145fa1"
-version = "2.28.0+0"
+version = "2.28.2+0"
 
 [[deps.Measures]]
 git-tree-sha1 = "c13304c81eec1ed3af7fc20e75fb6b26092a1102"
@@ -1369,7 +1402,7 @@ version = "0.3.4"
 
 [[deps.MozillaCACerts_jll]]
 uuid = "14a3606d-f60d-562e-9121-12d972cd8159"
-version = "2022.2.1"
+version = "2022.10.11"
 
 [[deps.MutableArithmetics]]
 deps = ["LinearAlgebra", "SparseArrays", "Test"]
@@ -1408,7 +1441,7 @@ version = "1.3.5+1"
 [[deps.OpenBLAS_jll]]
 deps = ["Artifacts", "CompilerSupportLibraries_jll", "Libdl"]
 uuid = "4536629a-c528-5b80-bd46-f80d51c5b363"
-version = "0.3.20+0"
+version = "0.3.21+4"
 
 [[deps.OpenJpeg_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Libtiff_jll", "LittleCMS_jll", "Pkg", "libpng_jll"]
@@ -1453,7 +1486,7 @@ version = "1.4.1"
 [[deps.PCRE2_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "efcefdf7-47ab-520b-bdef-62a2eaa19f15"
-version = "10.40.0+0"
+version = "10.42.0+0"
 
 [[deps.PROJ_jll]]
 deps = ["Artifacts", "JLLWrappers", "LibCURL_jll", "Libdl", "Libtiff_jll", "Pkg", "SQLite_jll"]
@@ -1485,9 +1518,9 @@ uuid = "30392449-352a-5448-841d-b1acce4e97dc"
 version = "0.40.1+0"
 
 [[deps.Pkg]]
-deps = ["Artifacts", "Dates", "Downloads", "LibGit2", "Libdl", "Logging", "Markdown", "Printf", "REPL", "Random", "SHA", "Serialization", "TOML", "Tar", "UUIDs", "p7zip_jll"]
+deps = ["Artifacts", "Dates", "Downloads", "FileWatching", "LibGit2", "Libdl", "Logging", "Markdown", "Printf", "REPL", "Random", "SHA", "Serialization", "TOML", "Tar", "UUIDs", "p7zip_jll"]
 uuid = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
-version = "1.8.0"
+version = "1.9.2"
 
 [[deps.PlotThemes]]
 deps = ["PlotUtils", "Statistics"]
@@ -1647,7 +1680,7 @@ uuid = "a2af1166-a08f-5f64-846c-94a0d3cef48c"
 version = "1.1.0"
 
 [[deps.SparseArrays]]
-deps = ["LinearAlgebra", "Random"]
+deps = ["Libdl", "LinearAlgebra", "Random", "Serialization", "SuiteSparse_jll"]
 uuid = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
 
 [[deps.SpecialFunctions]]
@@ -1676,6 +1709,7 @@ version = "1.4.0"
 [[deps.Statistics]]
 deps = ["LinearAlgebra", "SparseArrays"]
 uuid = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
+version = "1.9.0"
 
 [[deps.StatsAPI]]
 deps = ["LinearAlgebra"]
@@ -1700,10 +1734,15 @@ git-tree-sha1 = "ca4bccb03acf9faaf4137a9abc1881ed1841aa70"
 uuid = "856f2bd8-1eba-4b0a-8007-ebc267875bd4"
 version = "1.10.0"
 
+[[deps.SuiteSparse_jll]]
+deps = ["Artifacts", "Libdl", "Pkg", "libblastrampoline_jll"]
+uuid = "bea87d4a-7f5b-5778-9afe-8cc45184846c"
+version = "5.10.1+6"
+
 [[deps.TOML]]
 deps = ["Dates"]
 uuid = "fa267f1f-6049-4f14-aa54-33bafae1ed76"
-version = "1.0.0"
+version = "1.0.3"
 
 [[deps.TableTraits]]
 deps = ["IteratorInterfaceExtensions"]
@@ -1720,7 +1759,7 @@ version = "1.10.0"
 [[deps.Tar]]
 deps = ["ArgTools", "SHA"]
 uuid = "a4e569a6-e804-4fa4-b0f3-eef7a1d5b13e"
-version = "1.10.1"
+version = "1.10.0"
 
 [[deps.TensorCore]]
 deps = ["LinearAlgebra"]
@@ -1931,7 +1970,7 @@ version = "1.4.0+3"
 [[deps.Zlib_jll]]
 deps = ["Libdl"]
 uuid = "83775a58-1f1d-513f-b197-d71354ab007a"
-version = "1.2.12+3"
+version = "1.2.13+0"
 
 [[deps.Zstd_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
@@ -1964,9 +2003,9 @@ uuid = "0ac62f75-1d6f-5e53-bd7c-93b484bb37c0"
 version = "0.15.1+0"
 
 [[deps.libblastrampoline_jll]]
-deps = ["Artifacts", "Libdl", "OpenBLAS_jll"]
+deps = ["Artifacts", "Libdl"]
 uuid = "8e850b90-86db-534c-a0d3-1478176c7d93"
-version = "5.1.1+0"
+version = "5.8.0+0"
 
 [[deps.libfdk_aac_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
@@ -2041,6 +2080,7 @@ version = "1.4.1+0"
 # ╠═ffb7554a-3490-48a0-b72d-efe81ef5c59b
 # ╠═a95bc84f-683b-4770-af5e-9c86240c07ab
 # ╠═bdf41c07-a5d7-46d2-861c-49738d6a9566
+# ╠═e3424bba-88ac-4f56-8865-409ac6f654a1
 # ╠═113f7808-8e8c-415e-bc8b-4b7b9e7c49ee
 # ╠═5117be16-14df-4187-b29f-af41a946ef0a
 # ╠═4fb4787a-c790-48ad-962b-c66878963556
@@ -2052,15 +2092,21 @@ version = "1.4.1+0"
 # ╠═bc2be13d-2742-4f99-934b-a3a17ef236b0
 # ╠═10be04ec-87b2-455f-a74a-ede23dbee1ef
 # ╠═96460476-bfb4-4f7b-a52e-e614e76d5e65
+# ╠═96218dc0-5bb9-4552-a34d-50e1d97f6b7e
+# ╠═b88acf10-7afc-4b35-b62e-0fdcae73f203
 # ╠═61c6cb94-6ada-41c5-aab1-4c214a7c19aa
 # ╠═15abf7d6-0df6-477c-98f2-0e79813d8fc7
+# ╠═97e3a10c-67fc-484f-b27f-1777a61f9a26
+# ╠═0f898e91-6be4-49d7-9861-979a110c03a2
 # ╠═65d85773-e48b-4aa1-a1ec-10284e6f4864
 # ╠═e3e3b789-c497-4fe1-a4be-2a8430263513
 # ╠═37a32279-c5de-4baf-8004-b45a15468c0e
 # ╠═1dcb5f2e-8f97-4dc4-81ae-bec725ec218b
 # ╠═4c45200c-92f9-45d5-9409-1ac783568fce
+# ╠═2d97da6d-7e30-4868-8a7e-9578bcb98437
+# ╠═4a7274cb-1713-44f8-9f77-b264ed764c27
+# ╠═6417a8f4-db39-4597-a1df-f9a2bd78e1b8
 # ╠═ed2483f4-b364-46ff-8042-ae96bbd5d58f
-# ╠═51407e07-748b-4a2a-9866-3b2ca49d47d5
 # ╠═e68490e8-9d49-48e2-84f0-fe4487cd8024
 # ╠═db4714d0-cdfd-4135-95af-cdb761b22760
 # ╠═5fdfb5d1-8d96-410a-a5d7-625ea6f0dabc
